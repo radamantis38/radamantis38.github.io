@@ -3,85 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador de Tiempo Real</title>
+    <title>Contador en Tiempo Real</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
+            background-color: #0f172a; /* Fondo oscuro elegante */
+            color: #f8fafc;
         }
         .container {
             text-align: center;
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 80%;
+            background: #1e293b;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+            width: 90%;
+            max-width: 500px;
         }
         h1 {
-            font-size: 1.2rem;
-            color: #777;
+            font-size: 1rem;
+            color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
         }
         #contador {
             font-size: 3.5rem;
             font-weight: 800;
-            color: #007bff;
-            margin: 0.5rem 0;
-            line-height: 1.2;
+            color: #38bdf8; /* Azul brillante */
+            margin: 1.5rem 0;
+            font-variant-numeric: tabular-nums; /* Evita que los números "salten" al cambiar */
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
-        .detalle {
+        .frase {
             font-size: 1.1rem;
-            color: #444;
+            color: #cbd5e1;
+            line-height: 1.6;
             font-style: italic;
+            border-top: 1px solid #334155;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .unidad {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-transform: lowercase;
+            font-weight: normal;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Han pasado</h1>
-        <div id="contador">Cargando...</div>
-        <p class="detalle">"Y si llego a ganar más que usted que opinaria jaajjajaajjaa"</p>
+        <h1>Tiempo Transcurrido</h1>
+        <div id="contador">00:00:00:00</div>
+        <div class="frase">"Y si llego a ganar más que usted que opinaria jaajjajaajjaa"</div>
     </div>
 
     <script>
-        // Definimos la fecha de inicio (hace exactamente 2 días desde ahora al cargar por primera vez)
-        // O puedes poner una fecha fija: new Date('2024-05-20T10:00:00')
-        const fechaInicio = new Date();
-        fechaInicio.setDate(fechaInicio.getDate() - 2);
+        // CONFIGURACIÓN: Define aquí la fecha exacta del evento
+        // Formato: Año, Mes (0-11), Día, Hora, Minuto, Segundo
+        // Ejemplo: 15 de marzo de 2024 a las 14:30:00
+        const fechaEvento = new Date(2024, 2, 15, 14, 30, 0); 
 
-        function actualizarContador() {
+        function actualizarReloj() {
             const ahora = new Date();
-            const diferenciaMS = ahora - fechaInicio;
+            const diferenciaMS = ahora - fechaEvento;
 
-            // Cálculos matemáticos
-            const msPorDia = 1000 * 60 * 60 * 24;
-            const msPorHora = 1000 * 60 * 60;
-            const msPorMinuto = 1000 * 60;
+            if (diferenciaMS < 0) {
+                document.getElementById('contador').innerText = "Fecha futura";
+                return;
+            }
 
-            const dias = Math.floor(diferenciaMS / msPorDia);
-            const horas = Math.floor((diferenciaMS % msPorDia) / msPorHora);
-            const minutos = Math.floor((diferenciaMS % msPorHora) / msPorMinuto);
+            // Cálculos
+            const dias = Math.floor(diferenciaMS / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diferenciaMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutos = Math.floor((diferenciaMS % (1000 * 60 * 60)) / (1000 * 60));
+            const segundos = Math.floor((diferenciaMS % (1000 * 60)) / 1000);
 
-            // Formateo de texto
-            let texto = `${dias}d ${horas}h ${minutos}m`;
-            
-            document.getElementById('contador').innerText = texto;
+            // Formateo con ceros a la izquierda (01h en lugar de 1h)
+            const pad = (num) => num.toString().padStart(2, '0');
+
+            document.getElementById('contador').innerHTML = 
+                `${dias}<span class="unidad">d</span> ${pad(horas)}<span class="unidad">h</span> ${pad(minutos)}<span class="unidad">m</span> ${pad(segundos)}<span class="unidad">s</span>`;
         }
 
-        // Ejecutar inmediatamente
-        actualizarContador();
+        // Ejecutar cada segundo
+        setInterval(actualizarReloj, 1000);
 
-        // Actualizar cada 30 segundos para ahorrar recursos (puedes bajarlo a 1000 para segundos)
-        setInterval(actualizarContador, 30000);
+        // Carga inicial
+        actualizarReloj();
     </script>
 
 </body>
