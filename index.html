@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador en Tiempo Real</title>
+    <title>Contador en Tiempo Real con Foto</title>
     <style>
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -25,12 +25,26 @@
             width: 90%;
             max-width: 500px;
         }
+
+        /* --- NUEVOS ESTILOS PARA LA IMAGEN --- */
+        .foto-perfil {
+            width: 100px; /* Ajusta el tamaño aquí */
+            height: 100px; /* Ajusta el tamaño aquí */
+            border-radius: 50%; /* Hace la imagen circular */
+            object-fit: cover; /* Asegura que la foto no se estire */
+            border: 3px solid #38bdf8; /* Borde del color del contador */
+            margin-bottom: 1.5rem; /* Espacio debajo de la foto */
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); /* Resplandor suave */
+        }
+        /* -------------------------------------- */
+
         h1 {
             font-size: 1rem;
             color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 1rem;
+            margin-top: 0; /* Asegura que no haya espacio extra arriba */
         }
         #contador {
             font-size: 3.5rem;
@@ -55,32 +69,56 @@
             text-transform: lowercase;
             font-weight: normal;
         }
+
+        /* Ajuste para pantallas pequeñas */
+        @media (max-width: 480px) {
+            #contador {
+                font-size: 2.5rem;
+            }
+            .container {
+                padding: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <img src="Wilde.jpg" alt="Foto de perfil" class="foto-perfil">
+
         <h1>Tiempo Transcurrido</h1>
         <div id="contador">00:00:00:00</div>
-        <div class="frase">"Y si llego a ganar más que usted que opinaria jaajjajaajjaa"</div>
+        <div class="frase">Desde que Wilde dijo "Y si llego a ganar más que usted que opinaria jaajjajaajjaa"</div>
     </div>
 
     <script>
         // CONFIGURACIÓN: Define aquí la fecha exacta del evento
         // Formato: Año, Mes (0-11), Día, Hora, Minuto, Segundo
-        // Ejemplo: 15 de marzo de 2024 a las 14:30:00
-        const fechaEvento = new Date(2024, 2, 15, 14, 30, 0); 
+        // NOTA: Para probar el "Tiempo Transcurrido" hoy, he puesto una fecha PASADA.
+        // Si quieres probar el mensaje de "Fecha futura", pon una fecha como (2026, 2, 15...).
+        const fechaEvento = new Date(2023, 10, 1, 12, 0, 0); // Ejemplo: 1 de Noviembre 2023
 
         function actualizarReloj() {
             const ahora = new Date();
             const diferenciaMS = ahora - fechaEvento;
 
             if (diferenciaMS < 0) {
-                document.getElementById('contador').innerText = "Fecha futura";
+                // Si la fecha es futura, mostramos la cuenta regresiva o un mensaje
+                // He modificado esto para que también muestre la cuenta regresiva si es futura.
+                const futuraDiferenciaMS = fechaEvento - ahora;
+                const fDias = Math.floor(futuraDiferenciaMS / (1000 * 60 * 60 * 24));
+                const fHoras = Math.floor((futuraDiferenciaMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                // ... (podrías calcular min/seg aquí también para cuenta regresiva)
+                
+                document.getElementById('contador').innerHTML = `Faltan<br>${fDias}d ${fHoras}h`;
+                document.getElementById('contador').style.fontSize = '2.5rem'; // Ajuste de tamaño para el mensaje
                 return;
+            } else {
+                // Restablecer tamaño de fuente si estaba en modo "Faltan"
+                document.getElementById('contador').style.fontSize = ''; 
             }
 
-            // Cálculos
+            // Cálculos para tiempo transcurrido
             const dias = Math.floor(diferenciaMS / (1000 * 60 * 60 * 24));
             const horas = Math.floor((diferenciaMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutos = Math.floor((diferenciaMS % (1000 * 60 * 60)) / (1000 * 60));
