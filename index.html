@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador de Días</title>
+    <title>Contador de Tiempo Real</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,23 +18,29 @@
         .container {
             text-align: center;
             background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 80%;
         }
         h1 {
-            font-size: 1.5rem;
-            color: #555;
+            font-size: 1.2rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0;
         }
         #contador {
-            font-size: 4rem;
-            font-weight: bold;
+            font-size: 3.5rem;
+            font-weight: 800;
             color: #007bff;
-            margin: 1rem 0;
+            margin: 0.5rem 0;
+            line-height: 1.2;
         }
-        p {
+        .detalle {
             font-size: 1.1rem;
-            color: #777;
+            color: #444;
+            font-style: italic;
         }
     </style>
 </head>
@@ -42,35 +48,40 @@
 
     <div class="container">
         <h1>Han pasado</h1>
-        <div id="contador">0</div>
-        <p> Desde cuando Wilde dijo "Y si llego a ganar más que usted que opinaria jaajjajaajjaa"</p>
+        <div id="contador">Cargando...</div>
+        <p class="detalle">"Y si llego a ganar más que usted que opinaria jaajjajaajjaa"</p>
     </div>
 
     <script>
-        function calcularDias() {
-            // Obtenemos la fecha actual
-            const hoy = new Date();
+        // Definimos la fecha de inicio (hace exactamente 2 días desde ahora al cargar por primera vez)
+        // O puedes poner una fecha fija: new Date('2024-05-20T10:00:00')
+        const fechaInicio = new Date();
+        fechaInicio.setDate(fechaInicio.getDate() - 2);
+
+        function actualizarContador() {
+            const ahora = new Date();
+            const diferenciaMS = ahora - fechaInicio;
+
+            // Cálculos matemáticos
+            const msPorDia = 1000 * 60 * 60 * 24;
+            const msPorHora = 1000 * 60 * 60;
+            const msPorMinuto = 1000 * 60;
+
+            const dias = Math.floor(diferenciaMS / msPorDia);
+            const horas = Math.floor((diferenciaMS % msPorDia) / msPorHora);
+            const minutos = Math.floor((diferenciaMS % msPorHora) / msPorMinuto);
+
+            // Formateo de texto
+            let texto = `${dias}d ${horas}h ${minutos}m`;
             
-            // Creamos la fecha de hace 2 días
-            const haceDosDias = new Date();
-            haceDosDias.setDate(hoy.getDate() - 2);
-
-            // Calculamos la diferencia en milisegundos
-            const diferenciaMilisegundos = hoy - haceDosDias;
-
-            // Convertimos a días (1 día = 24h * 60m * 60s * 1000ms)
-            const diasPasados = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
-
-            // Mostramos el resultado
-            document.getElementById('contador').innerText = diasPasados + (diasPasados === 1 ? " día" : " días");
-            
-            // Opcional: Mostrar la fecha de inicio para referencia
-            const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('fecha-referencia').innerText = `Desde el ${haceDosDias.toLocaleDateString('es-ES', opciones)}`;
+            document.getElementById('contador').innerText = texto;
         }
 
-        // Ejecutar al cargar la página
-        calcularDias();
+        // Ejecutar inmediatamente
+        actualizarContador();
+
+        // Actualizar cada 30 segundos para ahorrar recursos (puedes bajarlo a 1000 para segundos)
+        setInterval(actualizarContador, 30000);
     </script>
 
 </body>
