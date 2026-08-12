@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador en Tiempo Real con Foto</title>
+    <title>Conteo Final</title>
     <style>
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -12,7 +12,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #0f172a; /* Fondo oscuro elegante */
+            background-color: #0f172a;
             color: #f8fafc;
         }
         .container {
@@ -26,17 +26,15 @@
             max-width: 500px;
         }
 
-        /* --- NUEVOS ESTILOS PARA LA IMAGEN --- */
         .foto-perfil {
-            width: 100px; /* Ajusta el tamaño aquí */
-            height: 100px; /* Ajusta el tamaño aquí */
-            border-radius: 50%; /* Hace la imagen circular */
-            object-fit: cover; /* Asegura que la foto no se estire */
-            border: 3px solid #38bdf8; /* Borde del color del contador */
-            margin-bottom: 1.5rem; /* Espacio debajo de la foto */
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); /* Resplandor suave */
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #38bdf8;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
         }
-        /* -------------------------------------- */
 
         h1 {
             font-size: 1rem;
@@ -44,36 +42,20 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 1rem;
-            margin-top: 0; /* Asegura que no haya espacio extra arriba */
+            margin-top: 0;
         }
-        #contador {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #38bdf8; /* Azul brillante */
+        #mensaje-final {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #38bdf8;
             margin: 1.5rem 0;
-            font-variant-numeric: tabular-nums; /* Evita que los números "salten" al cambiar */
+            line-height: 1.4;
             text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
-        .frase {
-            font-size: 1.1rem;
-            color: #cbd5e1;
-            line-height: 1.6;
-            font-style: italic;
-            border-top: 1px solid #334155;
-            padding-top: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        .unidad {
-            font-size: 0.9rem;
-            color: #64748b;
-            text-transform: lowercase;
-            font-weight: normal;
-        }
 
-        /* Ajuste para pantallas pequeñas */
         @media (max-width: 480px) {
-            #contador {
-                font-size: 2.5rem;
+            #mensaje-final {
+                font-size: 1.4rem;
             }
             .container {
                 padding: 2rem;
@@ -86,56 +68,11 @@
     <div class="container">
         <img src="wilde.jpg" alt="Foto de perfil" class="foto-perfil">
 
-        <h1>Tiempo Transcurrido</h1>
-        <div id="contador">00:00:00:00</div>
-        <div class="frase">Desde que Wilde dijo "Y si llego a ganar más que usted que opinaria jaajjajaajjaa"</div>
+        <h1>Resultado Final</h1>
+        <div id="mensaje-final">
+            El conteo final fue de 157 d 14 h 10 m ¿que pienso?, que estoy jodido
+        </div>
     </div>
-
-    <script>
-        // CONFIGURACIÓN: Define aquí la fecha exacta del evento
-        // Formato: Año, Mes (0-11), Día, Hora, Minuto, Segundo
-        // NOTA: Para probar el "Tiempo Transcurrido" hoy, he puesto una fecha PASADA.
-        // Si quieres probar el mensaje de "Fecha futura", pon una fecha como (2026, 2, 15...).
-        const fechaEvento = new Date(2026, 2, 7, 21, 33, 0);
-        function actualizarReloj() {
-            const ahora = new Date();
-            const diferenciaMS = ahora - fechaEvento;
-
-            if (diferenciaMS < 0) {
-                // Si la fecha es futura, mostramos la cuenta regresiva o un mensaje
-                // He modificado esto para que también muestre la cuenta regresiva si es futura.
-                const futuraDiferenciaMS = fechaEvento - ahora;
-                const fDias = Math.floor(futuraDiferenciaMS / (1000 * 60 * 60 * 24));
-                const fHoras = Math.floor((futuraDiferenciaMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                // ... (podrías calcular min/seg aquí también para cuenta regresiva)
-                
-                document.getElementById('contador').innerHTML = `Faltan<br>${fDias}d ${fHoras}h`;
-                document.getElementById('contador').style.fontSize = '2.5rem'; // Ajuste de tamaño para el mensaje
-                return;
-            } else {
-                // Restablecer tamaño de fuente si estaba en modo "Faltan"
-                document.getElementById('contador').style.fontSize = ''; 
-            }
-
-            // Cálculos para tiempo transcurrido
-            const dias = Math.floor(diferenciaMS / (1000 * 60 * 60 * 24));
-            const horas = Math.floor((diferenciaMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutos = Math.floor((diferenciaMS % (1000 * 60 * 60)) / (1000 * 60));
-            const segundos = Math.floor((diferenciaMS % (1000 * 60)) / 1000);
-
-            // Formateo con ceros a la izquierda (01h en lugar de 1h)
-            const pad = (num) => num.toString().padStart(2, '0');
-
-            document.getElementById('contador').innerHTML = 
-                `${dias}<span class="unidad">d</span> ${pad(horas)}<span class="unidad">h</span> ${pad(minutos)}<span class="unidad">m</span> ${pad(segundos)}<span class="unidad">s</span>`;
-        }
-
-        // Ejecutar cada segundo
-        setInterval(actualizarReloj, 1000);
-
-        // Carga inicial
-        actualizarReloj();
-    </script>
 
 </body>
 </html>
