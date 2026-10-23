@@ -3,76 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conteo Final</title>
+    <title>Catálogo de Lámparas</title>
+    <link rel="icon" href="favicon.ico">
     <style>
+        :root {
+            --fondo: #4e4e4e;
+            --fondo-oscuro: #3a3a3c;
+            --tarjeta: #2d2d2f;
+            --borde: #444446;
+            --texto: #f4f2e4;
+            --texto-suave: #b9b7a8;
+            --luz: #FBF8CA;
+            --acento: #e8c766;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: var(--fondo-oscuro);
+            color: var(--texto);
             margin: 0;
-            background-color: #0f172a;
-            color: #f8fafc;
         }
-        .container {
+
+        /* ---------- Encabezado con la lámpara (efecto de CodePen elrumordelaluz/abqOGP) ---------- */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background-color: var(--fondo);
             text-align: center;
-            background: #1e293b;
-            padding: 3rem;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            border: 1px solid #334155;
-            width: 90%;
-            max-width: 500px;
+            font-size: 10px;
+            padding-bottom: 4rem;
         }
 
-        .foto-perfil {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #38bdf8;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        .lamp-wrap {
+            position: relative;
+            display: inline-block;
+            transform-origin: top center;
+            transform: rotate(45deg);
+            animation: lamp 3s forwards;
         }
 
-        h1 {
-            font-size: 1rem;
-            color: #94a3b8;
+        .lamp {
+            display: block;
+            width: 12em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bulb {
+            fill: var(--luz);
+            fill-opacity: 0.1;
+            animation: bulb .3s .3s 5 cubic-bezier(.26,1.17,.89,-0.74) alternate forwards;
+        }
+
+        /* Haz de luz: aparece cuando el foco termina de parpadear (0.3s + 5 x 0.3s) */
+        .haz {
+            position: absolute;
+            top: 21em;
+            left: 50%;
+            width: 70em;
+            height: 50em;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, rgba(251, 248, 202, 0.35), rgba(251, 248, 202, 0) 85%);
+            clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+            filter: blur(6px);
+            opacity: 0;
+            pointer-events: none;
+            animation: encender .6s 1.8s forwards;
+        }
+
+        .hero-texto {
+            position: relative;
+            margin-top: 1.5rem;
+            padding: 0 16px;
+            opacity: 0.15;
+            animation: encender .6s 1.8s forwards;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 6vw, 3.4rem);
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            margin: 0 0 0.5rem;
+            color: var(--luz);
+            text-shadow: 0 0 25px rgba(251, 248, 202, 0.45);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--texto-suave);
+            margin: 0;
+        }
+
+        @keyframes bulb {
+            to {
+                fill-opacity: 1;
+                fill: var(--luz);
+            }
+        }
+
+        @keyframes lamp {
+            5%   { transform: rotate(-45deg) }
+            10%  { transform: rotate(35deg) }
+            15%  { transform: rotate(-35deg) }
+            25%  { transform: rotate(15deg) }
+            40%  { transform: rotate(-15deg) }
+            65%  { transform: rotate(3deg) }
+            85%  { transform: rotate(-1deg) }
+            100% { transform: rotate(0deg) }
+        }
+
+        @keyframes encender {
+            to { opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .lamp-wrap, .bulb, .haz, .hero-texto {
+                animation-duration: 0.01s;
+                animation-delay: 0s;
+                animation-iteration-count: 1;
+            }
+        }
+
+        /* ---------- Catálogo ---------- */
+        .catalogo {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 16px 4rem;
+        }
+
+        .catalogo h2 {
+            font-size: 0.9rem;
+            color: var(--texto-suave);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 1rem;
-            margin-top: 0;
-        }
-        #mensaje-final {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #38bdf8;
-            margin: 1.5rem 0;
-            line-height: 1.4;
-            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            text-align: center;
+            margin: 0 0 2rem;
         }
 
-        @media (max-width: 480px) {
-            #mensaje-final {
-                font-size: 1.4rem;
-            }
-            .container {
-                padding: 2rem;
-            }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
         }
+
+        .producto {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform .25s, box-shadow .25s;
+        }
+
+        .producto:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 30px rgba(251, 248, 202, 0.08);
+        }
+
+        /* Reemplaza el contenido de .foto por <img src="mi-lampara.jpg" alt="..."> */
+        .foto {
+            aspect-ratio: 4 / 3;
+            background: radial-gradient(circle at 50% 75%, rgba(251, 248, 202, 0.25), transparent 60%), var(--fondo);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .foto img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .foto svg {
+            height: 80%;
+        }
+
+        .info {
+            padding: 1.2rem 1.2rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .categoria {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--acento);
+        }
+
+        .producto h3 {
+            margin: 0.3rem 0 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .producto p {
+            margin: 0 0 1rem;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            color: var(--texto-suave);
+            flex: 1;
+        }
+
+        .pie-producto {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .precio {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--luz);
+        }
+
+        .pedir {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #25d366;
+            color: #0b2e17;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+        }
+
+        .pedir img { width: 16px; height: 16px; }
+
+        /* ---------- Pie de página ---------- */
+        footer {
+            text-align: center;
+            padding: 2rem 16px 3rem;
+            color: var(--texto-suave);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--borde);
+        }
+
+        .redes {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .redes a {
+            display: inline-flex;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--luz);
+        }
+
+        .redes img { width: 20px; height: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="wilde.jpg" alt="Foto de perfil" class="foto-perfil">
+    <!-- Ícono de lámpara reutilizable para las fotos de ejemplo -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="icono-lampara" viewBox="0 0 60 130">
+            <circle cx="30" cy="109.3" r="10.7" fill="#FBF8CA"/>
+            <rect x="20.7" y="66.7" fill="#2D2D2F" width="18.6" height="15.6"/>
+            <rect x="28.5" y="0" fill="#2D2D2F" width="3" height="66.7"/>
+            <path fill="#2D2D2F" d="M30,80.3c-16.6,0-30,13.4-30,30h60C60,93.8,46.6,80.3,30,80.3z"/>
+        </symbol>
+    </svg>
 
-        <h1>Resultado Final</h1>
-        <div id="mensaje-final">
-            El conteo final fue de 157 d 14 h 10 m ¿que pienso?, que estoy jodido
+    <header class="hero">
+        <div class="lamp-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 130" class="lamp" aria-hidden="true">
+                <!-- bulb -->
+                <g>
+                    <circle class="bulb" cx="30" cy="109.3" r="10.7"/>
+                    <line style="fill:none;stroke:#D7D5AF;stroke-width:0.263;stroke-linecap:round;stroke-miterlimit:10;" x1="28.1" y1="108.1" x2="27.4" y2="113.4"/>
+                    <line style="fill:none;stroke:#D7D5AF;stroke-width:0.263;stroke-linecap:round;stroke-miterlimit:10;" x1="32" y1="108.1" x2="32.6" y2="113.4"/>
+                    <polyline style="fill:none;stroke:#D7D5AF;stroke-width:0.263;stroke-linecap:round;stroke-miterlimit:10;" points="27.8,113.5 28.3,112.8 28.8,113.5 29.6,112.8 30,113.5 30.7,112.9 31.2,113.5 31.8,112.8 32.3,113.5"/>
+                </g>
+                <!-- /bulb -->
+                <rect x="20.7" y="66.7" style="fill:#2D2D2F;" width="18.6" height="15.6"/>
+                <rect x="28.5" y="0" style="fill:#2D2D2F;" width="3" height="66.7"/>
+                <path style="fill:#2D2D2F;" d="M30,80.3c-16.6,0-30,13.4-30,30h60C60,93.8,46.6,80.3,30,80.3z"/>
+            </svg>
+            <div class="haz"></div>
         </div>
-    </div>
+
+        <div class="hero-texto">
+            <h1>Catálogo de Lámparas</h1>
+            <p>Luz con estilo para cada rincón de tu casa</p>
+        </div>
+    </header>
+
+    <main class="catalogo">
+        <h2>Nuestras lámparas</h2>
+
+        <!--
+            Para agregar una lámpara copia un bloque <article class="producto"> completo y cambia:
+            categoría, nombre, descripción, precio y el texto del enlace de WhatsApp.
+            Para usar una foto real, reemplaza el <svg> dentro de .foto por: <img src="foto.jpg" alt="Nombre">
+            IMPORTANTE: cambia 570000000000 por tu número de WhatsApp (código de país + número, sin + ni espacios).
+        -->
+        <div class="grid">
+
+            <article class="producto">
+                <div class="foto"><svg><use href="#icono-lampara"/></svg></div>
+                <div class="info">
+                    <span class="categoria">Colgante</span>
+                    <h3>Campana Nórdica</h3>
+                    <p>Pantalla metálica negra mate, ideal sobre comedores e islas de cocina.</p>
+                    <div class="pie-producto">
+                        <span class="precio">$ 189.000</span>
+                        <a class="pedir" href="https://wa.me/570000000000?text=Hola%2C%20me%20interesa%20la%20l%C3%A1mpara%20Campana%20N%C3%B3rdica" target="_blank" rel="noopener">
+                            <img src="whatsapp.svg" alt=""> Pedir
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="producto">
+                <div class="foto"><svg><use href="#icono-lampara"/></svg></div>
+                <div class="info">
+                    <span class="categoria">Colgante</span>
+                    <h3>Edison Industrial</h3>
+                    <p>Bombillo de filamento visible con cable textil. Calidez vintage para cualquier espacio.</p>
+                    <div class="pie-producto">
+                        <span class="precio">$ 95.000</span>
+                        <a class="pedir" href="https://wa.me/570000000000?text=Hola%2C%20me%20interesa%20la%20l%C3%A1mpara%20Edison%20Industrial" target="_blank" rel="noopener">
+                            <img src="whatsapp.svg" alt=""> Pedir
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="producto">
+                <div class="foto"><svg><use href="#icono-lampara"/></svg></div>
+                <div class="info">
+                    <span class="categoria">Mesa</span>
+                    <h3>Lectura Articulada</h3>
+                    <p>Brazo ajustable y luz dirigida, perfecta para escritorio o mesa de noche.</p>
+                    <div class="pie-producto">
+                        <span class="precio">$ 149.000</span>
+                        <a class="pedir" href="https://wa.me/570000000000?text=Hola%2C%20me%20interesa%20la%20l%C3%A1mpara%20Lectura%20Articulada" target="_blank" rel="noopener">
+                            <img src="whatsapp.svg" alt=""> Pedir
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="producto">
+                <div class="foto"><svg><use href="#icono-lampara"/></svg></div>
+                <div class="info">
+                    <span class="categoria">Pie</span>
+                    <h3>Arco Moderno</h3>
+                    <p>Lámpara de pie en arco con base de mármol. Ilumina la sala sin perforar el techo.</p>
+                    <div class="pie-producto">
+                        <span class="precio">$ 420.000</span>
+                        <a class="pedir" href="https://wa.me/570000000000?text=Hola%2C%20me%20interesa%20la%20l%C3%A1mpara%20Arco%20Moderno" target="_blank" rel="noopener">
+                            <img src="whatsapp.svg" alt=""> Pedir
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="producto">
+                <div class="foto"><svg><use href="#icono-lampara"/></svg></div>
+                <div class="info">
+                    <span class="categoria">Pared</span>
+                    <h3>Aplique Luna</h3>
+                    <p>Luz indirecta y suave para pasillos, habitaciones y cabeceras de cama.</p>
+                    <div class="pie-producto">
+                        <span class="precio">$ 120.000</span>
+                        <a class="pedir" href="https://wa.me/570000000000?text=Hola%2C%20me%20interesa%20la%20l%C3%A1mpara%20Aplique%20Luna" target="_blank" rel="noopener">
+                            <img src="whatsapp.svg" alt=""> Pedir
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="producto">
+                <div class="foto"><svg><use href="#icono-lampara"/></svg></div>
+                <div class="info">
+                    <span class="categoria">Mesa</span>
+                    <h3>Globo de Vidrio</h3>
+                    <p>Esfera de vidrio opalino sobre base de madera. Ambiente cálido y relajado.</p>
+                    <div class="pie-producto">
+                        <span class="precio">$ 135.000</span>
+                        <a class="pedir" href="https://wa.me/570000000000?text=Hola%2C%20me%20interesa%20la%20l%C3%A1mpara%20Globo%20de%20Vidrio" target="_blank" rel="noopener">
+                            <img src="whatsapp.svg" alt=""> Pedir
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="redes">
+            <a href="https://wa.me/570000000000" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="whatsapp.svg" alt=""></a>
+            <a href="https://facebook.com/" target="_blank" rel="noopener" aria-label="Facebook"><img src="facebook.svg" alt=""></a>
+        </div>
+        Catálogo de Lámparas
+    </footer>
 
 </body>
 </html>
