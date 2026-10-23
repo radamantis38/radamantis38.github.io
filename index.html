@@ -8,20 +8,21 @@
     <style>
         :root {
             --fondo: #4e4e4e;
-            --fondo-oscuro: #3a3a3c;
-            --tarjeta: #2d2d2f;
-            --borde: #444446;
-            --texto: #f4f2e4;
-            --texto-suave: #b9b7a8;
+            --crema: #f5efe0;
+            --tarjeta: #fffdf7;
+            --borde: #e4dccb;
+            --texto: #2d2a24;
+            --texto-suave: #6b6558;
+            --texto-hero: #b9b7a8;
             --luz: #FBF8CA;
-            --acento: #e8c766;
+            --acento: #9a7419;
         }
 
         * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--fondo-oscuro);
+            background-color: var(--crema);
             color: var(--texto);
             margin: 0;
         }
@@ -92,7 +93,7 @@
 
         .hero p {
             font-size: 1.1rem;
-            color: var(--texto-suave);
+            color: var(--texto-hero);
             margin: 0;
         }
 
@@ -139,14 +140,45 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
-            margin: 0 0 2rem;
+            margin: 0 0 1.5rem;
+        }
+
+        /* Botones de filtro: se generan solos a partir de las categorías de las tarjetas */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filtros button {
+            font: inherit;
+            font-size: 0.9rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 999px;
+            border: 1px solid var(--borde);
+            background: var(--tarjeta);
+            color: var(--texto);
+            cursor: pointer;
+            transition: background .2s, color .2s;
+        }
+
+        .filtros button:hover { border-color: var(--acento); }
+
+        .filtros button[aria-pressed="true"] {
+            background: var(--texto);
+            border-color: var(--texto);
+            color: var(--luz);
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
+
+        .producto[hidden] { display: none; }
 
         .producto {
             background: var(--tarjeta);
@@ -160,12 +192,12 @@
 
         .producto:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 30px rgba(251, 248, 202, 0.08);
+            box-shadow: 0 12px 30px rgba(60, 45, 20, 0.18);
         }
 
         /* Reemplaza el contenido de .foto por <img src="mi-lampara.jpg" alt="..."> */
         .foto {
-            aspect-ratio: 4 / 3;
+            aspect-ratio: 1 / 1;
             background: radial-gradient(circle at 50% 75%, rgba(251, 248, 202, 0.25), transparent 60%), var(--fondo);
             display: flex;
             align-items: flex-start;
@@ -220,7 +252,7 @@
         .precio {
             font-size: 1.15rem;
             font-weight: 700;
-            color: var(--luz);
+            color: var(--texto);
         }
 
         .pedir {
@@ -261,7 +293,8 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background: var(--luz);
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
         }
 
         .redes img { width: 20px; height: 20px; }
@@ -305,6 +338,8 @@
 
     <main class="catalogo">
         <h2>Nuestras lámparas</h2>
+
+        <div class="filtros" role="group" aria-label="Filtrar por tipo de lámpara"></div>
 
         <!--
             Para agregar una lámpara copia un bloque <article class="producto"> completo y cambia:
@@ -411,9 +446,30 @@
         <div class="redes">
             <a href="https://wa.me/570000000000" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="whatsapp.svg" alt=""></a>
             <a href="https://facebook.com/" target="_blank" rel="noopener" aria-label="Facebook"><img src="facebook.svg" alt=""></a>
+            <a href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><img src="instagram.svg" alt=""></a>
         </div>
         Catálogo de Lámparas
     </footer>
+
+    <script>
+        // Crea un botón por cada categoría que aparezca en las tarjetas (más "Todas")
+        const filtros = document.querySelector('.filtros');
+        const productos = [...document.querySelectorAll('.producto')];
+        const categoriaDe = p => p.querySelector('.categoria').textContent.trim();
+        const categorias = ['Todas', ...new Set(productos.map(categoriaDe))];
+
+        categorias.forEach(cat => {
+            const boton = document.createElement('button');
+            boton.type = 'button';
+            boton.textContent = cat;
+            boton.setAttribute('aria-pressed', cat === 'Todas');
+            boton.addEventListener('click', () => {
+                filtros.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === boton));
+                productos.forEach(p => p.hidden = cat !== 'Todas' && categoriaDe(p) !== cat);
+            });
+            filtros.appendChild(boton);
+        });
+    </script>
 
 </body>
 </html>
